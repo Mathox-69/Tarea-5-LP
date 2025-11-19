@@ -1,3 +1,4 @@
+:- use_module(library(lists)).
 :- discontiguous asignatura/5.
 :- discontiguous prerrequisitos/2.
 
@@ -166,7 +167,16 @@ asignatura('INF-310','Trabajo de Título 2',20,11,59).
 
 prerrequisitos('INF-310',['INF-228','INF-309']).
 
-% habilitada/2
+% sublista/2
+/*
+ * Entrada:
+ *
+ * Salida:
+ * 
+ */
+sublista(S, L) :- append(_, L2, L), append(S, _, L2).
+
+% habilitada/2 +,+
 /*
  * Entrada:
  *
@@ -177,9 +187,9 @@ prerrequisitos('INF-310',['INF-228','INF-309']).
 habilitada(Asignatura, Aprobados) :- 
     prerrequisitos(Asignatura,X),
     \+member(Asignatura,Aprobados),
-    subset(X,Aprobados).
+    sublista(X,Aprobados),!.
 
-% es_prerrequisito/2
+% es_prerrequisito/2 +,+
 /*
  * Entrada:
  *
@@ -187,10 +197,10 @@ habilitada(Asignatura, Aprobados) :-
  * 
  */
 
-es_prerrequisito(Pre, Asignatura) :- prerrequisitos(Asignatura,X),member(Pre,X).
-es_prerrequisito(Pre, Asignatura) :- prerrequisitos(Asignatura,X),member(Y,X),es_prerrequisito(Pre,Y).
+es_prerrequisito(Pre, Asignatura) :- prerrequisitos(Asignatura,X),member(Pre,X),!.
+es_prerrequisito(Pre, Asignatura) :- prerrequisitos(Asignatura,X),member(Y,X),es_prerrequisito(Pre,Y),!.
 
-% permite_dar/3
+% permite_dar/3 +,+,-
 /*
  * Entrada:
  *
@@ -198,5 +208,24 @@ es_prerrequisito(Pre, Asignatura) :- prerrequisitos(Asignatura,X),member(Y,X),es
  * 
  */
 
+permite_dar(AprobadosPrev, AsignaturaRecienAprobada, NuevosHabilitados) :-
+    append(AprobadosPrev,[AsignaturaRecienAprobada],L),
+    findall(Asignaturas, habilitada(Asignaturas,L), Actuales),
+    findall(Asignaturas, habilitada(Asignaturas,AprobadosPrev), Antiguos),
+    subtract(Actuales, Antiguos, NuevosHabilitados).
+    
+% siguiente_semestre/4 +,+,+,-
+/*
+ * Entrada:
+ *
+ * Salida:
+ * 
+ */
+
+siguiente_semestre(Aprobados, SemActual, MaxCredSem, AsignaturasSugeridas) :- 
+    
+    
+    
+    
 
 
